@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>新冠肺炎检测</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>新冠肺炎检测</h1>
+
+    <h2><b>上传CT图像</b></h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*">
+        <select name="model">
+            {% for model_name, model_info in available_models.items() %}
+                <option value="{{ model_name }}"
+                        {% if model_name == selected_model %}selected{% endif %}>{{ model_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="上传检测">
+    </form>
+
+    <h2>检测结果</h2>
+    {% if result %}
+        <p><b>文件名：</b>{{ uploaded_image_dir }}</p>
+        <p><b>检测结果：</b>
+        {% if result == 'Viral Pneumonia' or result == 'COVID-19' %}
+            <span style="color: red;">{{ result }}</span>
+        {% else %}
+            {{ result }}
+        {% endif %}
+        </p>
+        <img src="{{ uploaded_image_url }}" alt="上传图像" style="max-width: 100%; max-height: 350px;">
+    {% endif %}
+
+    <h2>历史检测记录</h2>
+    <ul>
+        {% set previous_upload_time = None %}
+        {% for result in history_results %}
+            {% if result[3] != previous_upload_time %}
+                <li>
+                    <p>文件名：{{ result[0] }}</p>
+                    <p>使用模型：{{ result[1] }}</p>
+                    <p>分类结果：
+                    {% if result[2] == 'Viral Pneumonia' or result[2] == 'COVID-19' %}
+                        <span style="color: red;">{{ result[2] }}</span>
+                    {% else %}
+                        {{ result[2] }}
+                    {% endif %}
+                    </p>
+                    <p>上传时间：{{ result[3] }}</p>
+                    <img src="{{ result[4] }}" alt="历史图像" style="max-width: 100%; max-height: 250px;">
+                </li>
+            {% endif %}
+            {% set previous_upload_time = result[3] %}
+        {% endfor %}
+    </ul>
+</body>
+</html>

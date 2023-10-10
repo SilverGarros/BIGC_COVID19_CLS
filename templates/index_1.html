@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>图像分类</title>
+</head>
+<body>
+    <h1>上传要分类的图像</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".jpg, .jpeg, .png">
+        <input type="submit" value="分类">
+    </form>
+
+    <!-- 显示目前上传的图像 -->
+    {% if uploaded_image %}
+    <h2>目前上传的图像:</h2>
+    <img src="{{ uploaded_image }}" alt="Uploaded Image" style="max-width: 1024px;">
+    {% endif %}
+
+    <!-- 显示历史检测结果 -->
+    {% if result %}
+    <h2>分类结果: {{ result }}</h2>
+    {% endif %}
+
+    <!-- 显示历史检测结果列表 -->
+    <h2>历史检测结果:</h2>
+    <ul>
+        {% for history_result in history_results %}
+        <li>{{ history_result }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
